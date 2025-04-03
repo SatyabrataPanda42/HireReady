@@ -39,6 +39,7 @@ const Agent = ({userName,userId,type}:AgentProps) => {
           const onSpeechStart = () => {console.log("speech start");setIsSpeaking(true);};
           const onSpeechEnd = () => {console.log("speech end");setIsSpeaking(false);};
           const onError = (error: Error) => {console.log("Error:", error);};
+          console.log("Starting Vapi Call with:", { userName, userId });
 
             vapi.on("call-start", onCallStart);
             vapi.on("call-end", onCallEnd);
@@ -48,6 +49,7 @@ const Agent = ({userName,userId,type}:AgentProps) => {
             vapi.on("error", onError);
 
             return () => {
+                console.log("Starting Vapi Call with:", { userName, userId });
                 vapi.off("call-start", onCallStart);
                 vapi.off("call-end", onCallEnd);
                 vapi.off("message", onMessage);

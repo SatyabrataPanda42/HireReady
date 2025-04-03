@@ -3,6 +3,9 @@ import {google} from "@ai-sdk/google"
 import { useId } from "react";
 import { getRandomInterviewCover } from "@/lib/utils";
 import { db } from "@/firebase/admin";
+
+
+
 export async function GET(){
     return Response.json({
         success:true,
@@ -12,8 +15,10 @@ export async function GET(){
 }
 
 export async function POST(request:Request){
+    console.log("🔵 API HIT - Checking Vapi Request");
     const { type,role,level, techStack,amount,userid} = await request.json();
     try{
+        console.log("🟡 Headers:", request.headers);
         const { text:questions} = await generateText({
             model:google('gemini-2.0-flash-001'),
             prompt:`Prepare questions for a job interview.
@@ -45,7 +50,7 @@ export async function POST(request:Request){
 
 
         await db.collection("interviews").add(interview);
-
+        console.log('Generating questions:', interview)
         return Response.json({success:true},{status:200});
 
     }catch(e){
