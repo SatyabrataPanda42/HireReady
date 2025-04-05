@@ -72,14 +72,8 @@ async function Home() {
         <div className="interviews-section">
           {hasUpcomingInterviews ? (
             allInterview?.map((interview) => (
-              <InterviewCard
+              <InterviewCard {...interview}
                 key={interview.id}
-                userId={user?.id}
-                interviewId={interview.id}
-                role={interview.role}
-                type={interview.type}
-                techstack={interview.techstack}
-                createdAt={interview.createdAt}
               />
             ))
           ) : (
