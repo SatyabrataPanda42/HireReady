@@ -46,15 +46,12 @@ export async function POST(request:Request){
             finalized:true,
             coverImage: getRandomInterviewCover(),
             createdAt : new Date().toISOString(),
-        }
-
-
-        await db.collection("interviews").add(interview);
-        console.log('Generating questions:', interview)
-        return Response.json({success:true},{status:200});
+        };
+        
 
     }catch(e){
         console.log(e);
-        return Response.json({success:false,message:'Something went wrong!'}, {status:500});
+        return Response.json({success:false,message:'Something went wrong!'}, 
+            {status:500});
     }
 }
