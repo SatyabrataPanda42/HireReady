@@ -8,7 +8,7 @@ interface TechIconProps {
   techStack: string[];
 }
 
-const DisplayTechIcon = ({ techStack }: TechIconProps) => {
+const DisplayTechIcon = ({ techStack = [] }: TechIconProps) => {
   const [techIcons, setTechIcons] = useState<{ tech: string; url: string }[]>([]);
 
   useEffect(() => {
