@@ -1,30 +1,19 @@
-import {generateText} from "ai";
-import {google} from "@ai-sdk/google"
-import { useId } from "react";
-import { getRandomInterviewCover } from "@/lib/utils";
+import { generateText } from "ai";
+import { google } from "@ai-sdk/google";
+
 import { db } from "@/firebase/admin";
+import { getRandomInterviewCover } from "@/lib/utils";
 
+export async function POST(request: Request) {
+  const { type, role, level, techstack, amount, userid } = await request.json();
 
-
-export async function GET(){
-    return Response.json({
-        success:true,
-        data:'THANKS'
-    },
-    {status:200});
-}
-
-export async function POST(request:Request){
-    console.log("🔵 API HIT - Checking Vapi Request");
-    const { type,role,level, techStack,amount,userid} = await request.json();
-    try{
-        console.log("🟡 Headers:", request.headers);
-        const { text:questions} = await generateText({
-            model:google('gemini-2.0-flash-001'),
-            prompt:`Prepare questions for a job interview.
+  try {
+    const { text: questions } = await generateText({
+      model: google("gemini-2.0-flash-001"),
+      prompt: `Prepare questions for a job interview.
         The job role is ${role}.
         The job experience level is ${level}.
-        The tech stack used in the job is: ${techStack}.
+        The tech stack used in the job is: ${techstack}.
         The focus between behavioural and technical questions should lean towards: ${type}.
         The amount of questions required is: ${amount}.
         Please return only the questions, without any additional text.
@@ -34,24 +23,29 @@ export async function POST(request:Request){
         
         Thank you! <3
     `,
-        });
+    });
 
+    const interview = {
+      role: role,
+      type: type,
+      level: level,
+      techStack: techstack.split(","),
+      questions: JSON.parse(questions),
+      userId: userid,
+      finalized: true,
+      coverImage: getRandomInterviewCover(),
+      createdAt: new Date().toISOString(),
+    };
 
+    await db.collection("interviews").add(interview);
 
-        const interview = {
-            role,type,level,
-            techStack: techStack.split(','),
-            questions: JSON.parse(questions),
-            userId:userid,
-            finalized:true,
-            coverImage: getRandomInterviewCover(),
-            createdAt : new Date().toISOString(),
-        };
-        
+    return Response.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error("Error:", error);
+    return Response.json({ success: false, error: error }, { status: 500 });
+  }
+}
 
-    }catch(e){
-        console.log(e);
-        return Response.json({success:false,message:'Something went wrong!'}, 
-            {status:500});
-    }
+export async function GET() {
+  return Response.json({ success: true, data: "Thank you!" }, { status: 200 });
 }
